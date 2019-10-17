@@ -79,13 +79,13 @@ usage_consumedQuantity varchar2(150 CHAR), usage_billedQuantity varchar2(150 CHA
 usage_consumedQuantityMeasure varchar2(150 CHAR), lineItem_isCorrection varchar2(150 CHAR), lineItem_backreferenceNo varchar2(150 CHAR));
 ```
 
-### Create Oracle Functions Application: "billing"
+### Create Oracle Functions Application: `billing`
 In Oracle Functions, an application is a logical grouping of functions & a common context to store configuration variables that are available to all functions in the application. 
-Next, create an application named "billing" to host the adw-billing function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
+Next, create an application named `billing` to host the adw-billing function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
 
 When creating applications, Oracle recommends that you use the same region as the Docker registry that's specified in the Fn Project CLI context, and be sure to select the compartment specified in the Fn Project CLI context.
 
-### Create Function: "adw-billing"
+### Create Function: `adw-billing`
 Now to create the actual function!
 
 #### Clone the 'oci-adw-billing-tutorial' git repository
