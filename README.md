@@ -34,8 +34,8 @@ Let’s consider an example of how we can;
 
 ![alt text](images/adw-billing-deployment-scenario-v0.01.png "ADW billing deployment topology")
 
-The Oracle Function itself is written in Python (see ../oci-usage-to-adw-function/adw-billing/func.py).  
-The function uses a custom container image based on oraclelinux:7-slim, and also includes oracle-instantclient19.3-basiclite, and rh-python36 (see ../oci-usage-to-adw-function/adw-billing/Dockerfile).
+The Oracle Function itself is written in Python (see `../oci-usage-to-adw-function/adw-billing/func.py`).  
+The function uses a custom container image based on oraclelinux:7-slim, and also includes oracle-instantclient19.3-basiclite, and rh-python36 (see `../oci-usage-to-adw-function/adw-billing/Dockerfile`).
 
 When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the credentials wallet used to access the ADW instance.
 
@@ -95,7 +95,7 @@ First, clone the oci-adw-billing-tutorial repository:
 $ git clone https://github.com/cameronsenese/oci-usage-to-adw-function.git
 ```
 
-Commands from this point forward will assume that you are in the "../oci-usage-to-adw-function/adw-billing" directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
+Commands from this point forward will assume that you are in the `../oci-usage-to-adw-function/adw-billing` directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
 
 ### Create the function
 Enter the following single Fn Project command to build the function and its dependencies as a Docker image, push the image to the specified Docker registry, and deploy the function to Oracle Functions:
@@ -161,14 +161,15 @@ $ fn config function billing adw-billing db_pass <value>
 The "value" field should contain the ADW ADMIN user password specified during the instance creation.
 
 ### Configure function logging
-When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later.  
-You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
+When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later. You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
 
 ### Invoke the function
 To invoke the function, issue the following command:
 ```
 $ fn invoke Billing ADW-Billing
 ```
+Once completed, your function has now inserted all historical Usage Report data into your ADW instance!
+*Note: The current maximum run time for an Oracle Function is 120 seconds. If your tenancy has hundreds of historical Usage Reports to process (there can be up to 365), then it may take a couple of invocations to completely process the data backlog..*
 
 ### Inspect function logs
 The function has been configured to provide some basic logging regarding it's operation.  
