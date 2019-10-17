@@ -89,7 +89,7 @@ When creating applications, Oracle recommends that you use the same region as th
 Now to create the actual function!
 
 #### Clone the 'oci-adw-billing-tutorial' git repository
-First, clone the oci-adw-billing-tutorial repository:
+First, clone the `oci-adw-billing-tutorial` repository:
 
 ```
 $ git clone https://github.com/cameronsenese/oci-usage-to-adw-function.git
@@ -104,7 +104,7 @@ Enter the following single Fn Project command to build the function and its depe
 $ fn -v deploy --app Billing
 ```
 
-The Fn Project CLI will generate output similar to the following (abbreviated) detailling the steps taken to build and deploy the function.
+The Fn Project CLI will generate output similar to the following (abbreviated) detailing the steps taken to build and deploy the function.
 ```
 $ Deploying ADW-Billing to app: Billing
 $ Bumped to version 0.0.1
@@ -129,25 +129,25 @@ Create the following custom configuration parameters using the cofig function co
 ```
 $ fn config function billing adw-billing usage_report_bucket <value>
 ```
-The "value" field should contain the OCI tenancy OCID.
+The `value` field should contain the OCI tenancy OCID.
 
 *-- Credentials Wallet Configuration*
 ```
 $ fn config function billing adw-billing TNS_ADMIN /tmp/wallet
 ```
-After invocation, the function will connect to the ADW instance and download and extract a copy of the credentials wallet (containing tsnames.ora) to the path /tmp/wallet. The TNS_ADMIN environment variable is used to specify the directory location for the tnsnames.ora file, which is used by the Oracle Instant Client when connecting to the ADW instance.
+After invocation, the function will connect to the ADW instance and download and extract a copy of the credentials wallet (containing tsnames.ora) to the path /tmp/wallet. The `TNS_ADMIN` environment variable is used to specify the directory location for the tnsnames.ora file, which is used by the Oracle Instant Client when connecting to the ADW instance.
 
 *-- Database connection DSN*
 ```
 $ fn config function billing adw-billing db_dsn <value>
 ```
-The "value" field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
+The `value` field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
 
 *-- Autonomous Database OCID*
 ```
 $ fn config function billing adw-billing db_ocid <value>
 ```
-The "value" field should contain the Autonomous Database instance OCID. The ADW instance OCID can be found in the OCI console on Autonomous Database Details page for your ADW instance.
+The `value` field should contain the Autonomous Database instance OCID. The ADW instance OCID can be found in the OCI console on Autonomous Database Details page for your ADW instance.
 
 *-- Autonomous Database Username*
 ```
@@ -158,7 +158,7 @@ $ fn config function billing adw-billing db_user ADMIN
 ```
 $ fn config function billing adw-billing db_pass <value>
 ```
-The "value" field should contain the ADW ADMIN user password specified during the instance creation.
+The `value` field should contain the ADW ADMIN user password specified during the instance creation.
 
 ### Configure function logging
 When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later. You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
@@ -194,9 +194,9 @@ SELECT * FROM oci_billing;
 
 On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within the Usage Repots CSV files.  
 
-The only exception is the column "USAGE_REPORT", which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
+The only exception is the column `USAGE_REPORT`, which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
 
-The "USAGE_REPORT" field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
+The `USAGE_REPORT` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
 
 
 ### To-Do:
