@@ -39,14 +39,14 @@ The function uses a custom container image based on oraclelinux:7-slim, and also
 
 When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the credentials wallet used to access the ADW instance.
 
-The function enumerates the usage reports contained within the OSS bucket, and will insert into the oci_billing table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
+The function enumerates the usage reports contained within the OSS bucket, and will insert into the `oci_billing` table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
 
 Resources referenced in this tutorial will be named as follows:
 
  - Compartment containing the ADW instance: "Demo-Compartment"
  - OCI IAM Dynamic Group Name: "FnFunc-Demo"
- - Oracle Functions Application Name: "Billing"
- - Function Name: "ADW-Billing"
+ - Oracle Functions Application Name: "billing"
+ - Function Name: "adw-billing"
 
 ### Prerequisites
 The following should be completed before going ahead and creating your Oracle Cloud Function:
@@ -67,7 +67,7 @@ endorse dynamic-group FnFunc-Demo to read objects in tenancy usage-report
 allow dynamic-group FnFunc-Demo to use autonomous-databases in compartment Demo-Compartment where request.permission='AUTONOMOUS_DATABASE_CONTENT_READ'
 ```
 
-### Create OCI_BILLING Database Table
+### Create `oci_billing` Database Table
 Next we create our database table which will store the Usage Report data. To do this we will use the ADW instance built-in SQL Developer Web client. Follow the link to [this tutorial](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/user/sql-developer-web.html#GUID-102845D9-6855-4944-8937-5C688939610F) for guidance on accessing SQL Developer Web as user ADMIN from your Autonomous Data Warehouse. Once connected, run the following SQL statement to create the "oci_billing" table:
 
 ``` sql
@@ -79,13 +79,13 @@ usage_consumedQuantity varchar2(150 CHAR), usage_billedQuantity varchar2(150 CHA
 usage_consumedQuantityMeasure varchar2(150 CHAR), lineItem_isCorrection varchar2(150 CHAR), lineItem_backreferenceNo varchar2(150 CHAR));
 ```
 
-### Create Oracle Functions Application: "Billing"
+### Create Oracle Functions Application: "billing"
 In Oracle Functions, an application is a logical grouping of functions & a common context to store configuration variables that are available to all functions in the application. 
-Next, create an application named "Billing" to host the ADW-Billing function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
+Next, create an application named "billing" to host the adw-billing function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
 
 When creating applications, Oracle recommends that you use the same region as the Docker registry that's specified in the Fn Project CLI context, and be sure to select the compartment specified in the Fn Project CLI context.
 
-### Create Function: "ADW-Billing"
+### Create Function: "adw-billing"
 Now to create the actual function!
 
 #### Clone the 'oci-adw-billing-tutorial' git repository
@@ -101,18 +101,18 @@ Commands from this point forward will assume that you are in the `../oci-usage-t
 Enter the following single Fn Project command to build the function and its dependencies as a Docker image, push the image to the specified Docker registry, and deploy the function to Oracle Functions:
 
 ```
-$ fn -v deploy --app Billing
+$ fn -v deploy --app billing
 ```
 
 The Fn Project CLI will generate output similar to the following (abbreviated) detailing the steps taken to build and deploy the function.
 ```
-$ Deploying ADW-Billing to app: Billing
+$ Deploying adw-billing to app: billing
 $ Bumped to version 0.0.1
 $ Building image...
 $ ...
 $ ...
 $ 0.0.1: digest: sha256:71c0f9fac6164b676b781970b5d79b86a28838081c6ea88e00cc1cf07630ccc6 size: 1363
-$ Updating function ADW-Billing using image iad.ocir.io/tenancy/FnBilling/ADW-Billing:0.0.1...
+$ Updating function adw-billing using image iad.ocir.io/tenancy/fnbilling/adw-billing:0.0.1...
 ```
 
 ### Implement function configuration parameters
@@ -166,7 +166,7 @@ When a function you've deployed to Oracle Functions is invoked, you'll typically
 ### Invoke the function
 To invoke the function, issue the following command:
 ```
-$ fn invoke Billing ADW-Billing
+$ fn invoke billing adw-billing
 ```
 That's it! Once completed, your function has now inserted all historical Usage Report data into your ADW instance.  
 *Note: The current maximum run time for an Oracle Function is 120 seconds. If your tenancy has hundreds of historical Usage Reports to process (there can be up to 365), then it may take a couple of invocations to completely process the data backlog..*
@@ -194,9 +194,9 @@ SELECT * FROM oci_billing;
 
 On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within the Usage Repots CSV files.  
 
-The only exception is the column `USAGE_REPORT`, which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
+The only exception is the column `usage_report`, which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
 
-The `USAGE_REPORT` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
+The `usage_report` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
 
 
 ### To-Do:
