@@ -34,7 +34,8 @@ Let’s consider an example of how we can;
 
 ![alt text](images/adw-billing-deployment-scenario-v0.01.png "ADW billing deployment topology")
 
-The Oracle Function itself is written in Python (../oci-usage-to-adw-function/adw-billing/func.py). The function uses a custom container image based on oraclelinux:7-slim, and includes oracle-instantclient19.3-basiclite, and rh-python36 (../oci-usage-to-adw-function/adw-billing/Dockerfile).
+The Oracle Function itself is written in Python (see ../oci-usage-to-adw-function/adw-billing/func.py).  
+The function uses a custom container image based on oraclelinux:7-slim, and also includes oracle-instantclient19.3-basiclite, and rh-python36 (see ../oci-usage-to-adw-function/adw-billing/Dockerfile).
 
 When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the credentials wallet used to access the ADW instance.
 
