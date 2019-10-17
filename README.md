@@ -34,7 +34,9 @@ Let’s consider an example of how we can;
 
 ![alt text](images/adw-billing-deployment-scenario-v0.01.png "ADW billing deployment topology")
 
-The Oracle Function itself is written in Python. When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and also to download the ADW credentials wallet. The function enumerates the usage reports contained within the OSS bucket, and will insert into the oci_billing table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
+The Oracle Function itself is written in Python.
+When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the ADW credentials wallet.
+The function enumerates the usage reports contained within the OSS bucket, and will insert into the oci_billing table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
 
 Resources referenced in this tutorial will be named as follows:
 
@@ -45,9 +47,7 @@ Resources referenced in this tutorial will be named as follows:
 
 ### Prerequisites
 The following should be completed before going ahead and creating your Oracle Cloud Function:
- - **OCI Tenancy:** If you don't already have an OCI tenancy, you can sign-up right [here](https://www.oracle.com/cloud/free/) and experience the benefits of OCI (with the included always free services!). The services that you can use free of charge for an unlimited time include:
-   - Two Oracle Autonomous Databases with powerful tools like Oracle Application Express (APEX) and Oracle SQL Developer
-   - Two Oracle Cloud Infrastructure Compute VMs; Block, Object, and Archive Storage; Load Balancer and data egress; Monitoring and Notifications
+ - **OCI Tenancy:** If you don't already have an OCI tenancy, you can sign-up right [here](https://www.oracle.com/cloud/free/) and experience the benefits of OCI with the included always free services, including Autonomous Data Warehouse!
  - **Deploy an Autonomous Data Warehouse:** You will need to have deployed your Autonomous Data Warehouse instance prior to commencing implementation of the deployment scenario. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Database/Tasks/adbcreating.htm) for guidance on the process.
  - **Download the DB Client Credential Package (Credentials Wallet):** Information contained within the wallet will be used later in the tutorial. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Database/Tasks/adbconnecting.htm) for guidance on the process.
  - **Access the Usage Reports Bucket:** OCI IAM policies are required to be configured in order to access Usage Reports. Follow [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Billing/Tasks/accessingusagereports.htm) for guidance on the process.
@@ -122,36 +122,36 @@ $ fn config function <app-name> <function-name> <key> <value>
 
 Create the following custom configuration parameters using the cofig function command:
 
- - **Tenancy Usage Report Bucket**
+*-- Tenancy Usage Report Bucket*
 ```
 $ fn config function billing adw-billing usage_report_bucket <value>
 ```
 The "value" field should contain the OCI tenancy OCID.
 
- - **Credentials Wallet Configuration**
+*-- Credentials Wallet Configuration*
 ```
 $ fn config function billing adw-billing TNS_ADMIN /tmp/wallet
 ```
 After invocation, the function will connect to the ADW instance and download and extract a copy of the credentials wallet (containing tsnames.ora) to the path /tmp/wallet. The TNS_ADMIN environment variable is used to specify the directory location for the tnsnames.ora file, which is used by the Oracle Instant Client when connecting to the ADW instance.
 
- - **Database connection DSN**
+*-- Database connection DSN*
 ```
 $ fn config function billing adw-billing db_dsn <value>
 ```
 The "value" field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
 
- - **Autonomous Database OCID**
+*-- Autonomous Database OCID*
 ```
 $ fn config function billing adw-billing db_ocid <value>
 ```
 The "value" field should contain the Autonomous Database instance OCID. The ADW instance OCID can be found in the OCI console on Autonomous Database Details page for your ADW instance.
 
- - **Autonomous Database Username**
+*-- Autonomous Database Username*
 ```
 $ fn config function billing adw-billing db_user ADMIN
 ```
 
- - **Autonomous Database Password**
+*-- Autonomous Database Password*
 ```
 $ fn config function billing adw-billing db_pass <value>
 ```
