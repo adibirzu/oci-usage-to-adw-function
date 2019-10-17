@@ -55,7 +55,7 @@ The following should be completed before going ahead and creating your Oracle Cl
  - **Set up your tenancy for function development:** Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsconfiguringtenancies.htm) for guidance on the process.
  - **Configure Your Client Environment for Function Development:** Before you can start using Oracle Functions to create and deploy functions, you have to set up your client environment for function development. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsconfiguringclient.htm) for guidance on the process.
 
-#### Additional IAM Policies
+### Additional IAM Policies
 When a function you've deployed to Oracle Functions is running, it can access other Oracle Cloud Infrastructure resources. To enable a function to access another Oracle Cloud Infrastructure resource, you have to include the function in a dynamic group, and then create a policy to grant the dynamic group access to that resource. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsaccessingociresources.htm) for guidance on creating a Dynamic Group. 
 
 For our deployment scenario we'll require our "FnFunc-Demo" Dynamic Group to access both the Usage Report Object Storage Bucket, as well as our Autonomous Database instance. To enable this, create the following additional IAM Policies:
@@ -95,7 +95,7 @@ $ git clone https://github.com/cameronsenese/oci-adw-billing-tutorial.git
 
 Commands from this point forward will assume that you are in the "../oci-adw-billing-tutorial/adw-billing" directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
 
-#### Create the function
+### Create the Oracle Function
 Enter the following single Fn Project command to build the function and its dependencies as a Docker image, push the image to the specified Docker registry, and deploy the function to Oracle Functions:
 
 ```
@@ -113,7 +113,7 @@ $ 0.0.1: digest: sha256:71c0f9fac6164b676b781970b5d79b86a28838081c6ea88e00cc1cf0
 $ Updating function ADW-Billing using image iad.ocir.io/tenancy/FnBilling/ADW-Billing:0.0.1...
 ```
 
-#### Configure the function configuration parameters
+### Implement function configuration parameters
 Now that we have our function built and deployed - it requires the creation of a number of configuration parameters in order for it to operate successfully. User defined configuration parameters are made available to the function via key-value pairs known as custom configuration parameters.
 
 To specify custom configuration parameters using the Fn Project CLI, the following command format is used:
@@ -158,7 +158,7 @@ $ fn config function billing adw-billing db_pass <value>
 ```
 The "value" field should contain the ADW ADMIN user password specified during the instance creation.
 
-#### Configure function logging
+### Configure function logging
 When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later.  
 You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
 
@@ -168,7 +168,7 @@ To invoke the function, issue the following command:
 $ fn invoke Billing ADW-Billing
 ```
 
-#### Inspect logs..
+### Inspect function logs..
 The function has been configured to provide some basic logging regarding it's operation.  
 The following excerpt illustrates the function log data relating to the download and processing of a single Usage Report file:
 
@@ -183,8 +183,7 @@ root - INFO - report_id: ocid1.tenancy.oc1..aaaaaaaac3l6hgyl..-0001000000076776:
 root - INFO - runtime: 06.092967748641968 seconds
 ```
 
-#### Inspect usage data via SQL Developer Web client
-
+### Inspect uploaded Usage Data via SQL Developer Web client
 Finally - let's use the ADW instance built-in SQL Developer Web client to take a look at the usage data as stored in our data warehouse. Once connected to the SQL Developer Web client, run the following SQL statement:
 ``` sql
 SELECT * FROM oci_billing;
