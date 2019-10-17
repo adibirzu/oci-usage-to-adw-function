@@ -34,8 +34,9 @@ Let’s consider an example of how we can;
 
 ![alt text](images/adw-billing-deployment-scenario-v0.01.png "ADW billing deployment topology")
 
-The Oracle Function itself is written in Python.
-When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the ADW credentials wallet.
+The Oracle Function itself is written in Python (../oci-usage-to-adw-function/adw-billing/func.py). The function uses a custom container image based on oraclelinux:7-slim, and includes oracle-instantclient19.3-basiclite, and rh-python36 (../oci-usage-to-adw-function/adw-billing/Dockerfile).
+
+When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the credentials wallet used to access the ADW instance.
 
 The function enumerates the usage reports contained within the OSS bucket, and will insert into the oci_billing table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
 
@@ -90,10 +91,10 @@ Now to create the actual function!
 First, clone the oci-adw-billing-tutorial repository:
 
 ```
-$ git clone https://github.com/cameronsenese/oci-adw-billing-tutorial.git
+$ git clone https://github.com/cameronsenese/oci-usage-to-adw-function.git
 ```
 
-Commands from this point forward will assume that you are in the "../oci-adw-billing-tutorial/adw-billing" directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
+Commands from this point forward will assume that you are in the "../oci-usage-to-adw-function/adw-billing" directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
 
 ### Create the function
 Enter the following single Fn Project command to build the function and its dependencies as a Docker image, push the image to the specified Docker registry, and deploy the function to Oracle Functions:
