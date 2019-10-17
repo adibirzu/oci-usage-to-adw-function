@@ -129,7 +129,7 @@ Create the following custom configuration parameters using the cofig function co
 ```
 $ fn config function billing adw-billing usage_report_bucket <value>
 ```
-The `value` field should contain the OCI tenancy OCID.
+The `<value>` field should contain the OCI tenancy OCID.
 
 *-- Credentials Wallet Configuration*
 ```
@@ -141,13 +141,13 @@ After invocation, the function will connect to the ADW instance and download and
 ```
 $ fn config function billing adw-billing db_dsn <value>
 ```
-The `value` field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
+The `<value>` field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
 
 *-- Autonomous Database OCID*
 ```
 $ fn config function billing adw-billing db_ocid <value>
 ```
-The `value` field should contain the Autonomous Database instance OCID. The ADW instance OCID can be found in the OCI console on Autonomous Database Details page for your ADW instance.
+The `<value>` field should contain the Autonomous Database instance OCID. The ADW instance OCID can be found in the OCI console on Autonomous Database Details page for your ADW instance.
 
 *-- Autonomous Database Username*
 ```
@@ -158,7 +158,7 @@ $ fn config function billing adw-billing db_user ADMIN
 ```
 $ fn config function billing adw-billing db_pass <value>
 ```
-The `value` field should contain the ADW ADMIN user password specified during the instance creation.
+The `<value>` field should contain the ADW ADMIN user password specified during the instance creation.
 
 ### Configure function logging
 When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later. You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
