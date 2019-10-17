@@ -168,7 +168,7 @@ To invoke the function, issue the following command:
 ```
 $ fn invoke Billing ADW-Billing
 ```
-Once completed, your function has now inserted all historical Usage Report data into your ADW instance!
+That's it! Once completed, your function has now inserted all historical Usage Report data into your ADW instance.  
 *Note: The current maximum run time for an Oracle Function is 120 seconds. If your tenancy has hundreds of historical Usage Reports to process (there can be up to 365), then it may take a couple of invocations to completely process the data backlog..*
 
 ### Inspect function logs
