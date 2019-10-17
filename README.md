@@ -36,6 +36,7 @@ Let’s consider an example of how we can;
 
 The Oracle Function itself is written in Python.
 When invoked, the function uses a call to a 'resource principal provider' that enables the function to authenticate and access the Usage Reports Object Storage (OSS) bucket, and to also download the ADW credentials wallet.
+
 The function enumerates the usage reports contained within the OSS bucket, and will insert into the oci_billing table all Usage Reports data that has not previously been insterted. This means that the first time the function is invoked, an initial bulk upload of all historical Usage Report data will occur. For subsequent function invocations, only new Usage Data will be processed.
 
 Resources referenced in this tutorial will be named as follows:
@@ -162,13 +163,14 @@ When a function you've deployed to Oracle Functions is invoked, you'll typically
 You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
 
 ### Invoke the function: "ADW-Billing"
-To inoke the function, issue the following command:
+To invoke the function, issue the following command:
 ```
 $ fn invoke Billing ADW-Billing
 ```
 
 #### Inspect logs..
-The function has been configured to provide some basic logging regarding it's operation. The following excerpt illustrates the function log data relating to the download and processing of a single Usage Report file:
+The function has been configured to provide some basic logging regarding it's operation.  
+The following excerpt illustrates the function log data relating to the download and processing of a single Usage Report file:
 
 ```
 oci.base_client.139777842449152 - INFO -  2019-10-17 06:17:41.425456: Request: GET https://objectstorage.us-ashburn-1.oraclecloud.com/n/bling/b/ocid1.tenancy.oc1..aaaaaaaac3l6hgyl../o/reports/usage-csv/0001000000076336.csv.gz 
@@ -183,14 +185,15 @@ root - INFO - runtime: 06.092967748641968 seconds
 
 #### Inspect usage data via SQL Developer Web client
 
-Finally - let's use the ADW instance built-in SQL Developer Web client to take a look at the usage data as stored in our data warehouse.  
-Once connected to the SQL Developer Web client, run the following SQL statement:
+Finally - let's use the ADW instance built-in SQL Developer Web client to take a look at the usage data as stored in our data warehouse. Once connected to the SQL Developer Web client, run the following SQL statement:
 ``` sql
 SELECT * FROM oci_billing;
 ```
 
 On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within the Usage Repots CSV files.  
+
 The only exception is the column "USAGE_REPORT", which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
+
 The "USAGE_REPORT" field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
 
 
