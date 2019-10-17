@@ -95,7 +95,7 @@ $ git clone https://github.com/cameronsenese/oci-adw-billing-tutorial.git
 
 Commands from this point forward will assume that you are in the "../oci-adw-billing-tutorial/adw-billing" directory, which is the directory containing the function code, and other dependencies such as the Dockerfile used to build the container image, the func.yaml (function configuration file), and a Python requirements definition file.
 
-### Create the Oracle Function
+### Create the function
 Enter the following single Fn Project command to build the function and its dependencies as a Docker image, push the image to the specified Docker registry, and deploy the function to Oracle Functions:
 
 ```
@@ -162,13 +162,13 @@ The "value" field should contain the ADW ADMIN user password specified during th
 When a function you've deployed to Oracle Functions is invoked, you'll typically want to store the function's logs so that you can review them later.  
 You specify where Oracle Functions stores a function's logs by setting a logging policy for the application containing the function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsexportingfunctionlogfiles.htm) for guidance on the process.
 
-### Invoke the function: "ADW-Billing"
+### Invoke the function
 To invoke the function, issue the following command:
 ```
 $ fn invoke Billing ADW-Billing
 ```
 
-### Inspect function logs..
+### Inspect function logs
 The function has been configured to provide some basic logging regarding it's operation.  
 The following excerpt illustrates the function log data relating to the download and processing of a single Usage Report file:
 
