@@ -43,10 +43,10 @@ The function enumerates the usage reports contained within the OSS bucket, and w
 
 Resources referenced in this tutorial will be named as follows:
 
- - Compartment containing the ADW instance: "Demo-Compartment"
- - OCI IAM Dynamic Group Name: "FnFunc-Demo"
- - Oracle Functions Application Name: "billing"
- - Function Name: "adw-billing"
+ - Compartment containing the ADW instance: ***Demo-Compartment***
+ - OCI IAM Dynamic Group Name: ***FnFunc-Demo***
+ - Oracle Functions Application Name: ***billing***
+ - Function Name: ***adw-billing***
 
 ### Prerequisites
 The following should be completed before going ahead and creating your Oracle Cloud Function:
@@ -194,7 +194,7 @@ SELECT * FROM oci_billing;
 
 On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within the Usage Repots CSV files.  
 
-The only exception is the column `usage_report`, which has been included to help ensure records remain unique - particularly if you are hostimg usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
+The only exception is the column `usage_report`, which has been included to help ensure records remain unique - particularly if you are hosting usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
 
 The `usage_report` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
 
