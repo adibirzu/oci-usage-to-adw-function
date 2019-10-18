@@ -68,7 +68,7 @@ allow dynamic-group FnFunc-Demo to use autonomous-databases in compartment Demo-
 ```
 
 ### Create `oci_billing` Database Table
-Next we create our database table which will store the Usage Report data. To do this we will use the ADW instance built-in SQL Developer Web client. Follow the link to [this tutorial](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/user/sql-developer-web.html#GUID-102845D9-6855-4944-8937-5C688939610F) for guidance on accessing SQL Developer Web as user ADMIN from your Autonomous Data Warehouse. Once connected, run the following SQL statement to create the "oci_billing" table:
+Next we create our database table which will store the Usage Report data. To do this we will use the ADW instance built-in SQL Developer Web client. Follow the link to [this tutorial](https://docs.oracle.com/en/cloud/paas/autonomous-data-warehouse-cloud/user/sql-developer-web.html#GUID-102845D9-6855-4944-8937-5C688939610F) for guidance on accessing SQL Developer Web as user ADMIN from your Autonomous Data Warehouse. Once connected, run the following SQL statement to create the `oci_billing` table:
 
 ``` sql
 create table oci_billing(usage_report varchar2(150 CHAR), lineItem_referenceNo varchar2(150 CHAR), lineItem_tenantId varchar2(150 CHAR),  
@@ -81,15 +81,15 @@ usage_consumedQuantityMeasure varchar2(150 CHAR), lineItem_isCorrection varchar2
 
 ### Create Oracle Functions Application: `billing`
 In Oracle Functions, an application is a logical grouping of functions & a common context to store configuration variables that are available to all functions in the application. 
-Next, create an application named `billing` to host the adw-billing function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
+Next, create an application named `billing` to host the `adw-billing` function. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionscreatingapps.htm) for guidance on the process.
 
 When creating applications, Oracle recommends that you use the same region as the Docker registry that's specified in the Fn Project CLI context, and be sure to select the compartment specified in the Fn Project CLI context.
 
 ### Create Function: `adw-billing`
 Now to create the actual function!
 
-#### Clone the 'oci-adw-billing-tutorial' git repository
-First, clone the `oci-adw-billing-tutorial` repository:
+#### Clone the `oci-adw-billing-tutorial` git repository
+First, let's clone the `oci-adw-billing-tutorial` repository:
 
 ```
 $ git clone https://github.com/cameronsenese/oci-usage-to-adw-function.git
