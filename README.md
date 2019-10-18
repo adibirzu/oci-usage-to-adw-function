@@ -192,13 +192,29 @@ Finally - let's use the ADW instance built-in SQL Developer Web client to take a
 SELECT * FROM oci_billing;
 ```
 
-On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within the Usage Repots CSV files.  
+On observation of the result set - you will note that each of the columns in the database correlate to fields as contained within Usage Report CSV files.  
 
 The only exception is the column `usage_report`, which has been included to help ensure records remain unique - particularly if you are hosting usage data from multiple tenancies within a single database. It's also used by the function to determine if a given Usage Report file has been previosly inserted into the database.  
 
-The `usage_report` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced.
+The `usage_report` field stores a value that is a concatenation of the OCI tenancy OCID and the Usage Report CSV file name from which the data was sourced, for example:
 
+```
+USAGE_REPORT
+------------------------------------------------------------------------------------------------
+ocid1.tenancy.oc1..aaaaaaaac3l6hgylozzuh2bxhf3557quavpa2v6675u2kejplzalhgk4nzka-0001000000010470
+ocid1.tenancy.oc1..aaaaaaaac3l6hgylozzuh2bxhf3557quavpa2v6675u2kejplzalhgk4nzka-0001000000010470
+ocid1.tenancy.oc1..aaaaaaaac3l6hgylozzuh2bxhf3557quavpa2v6675u2kejplzalhgk4nzka-0001000000010470
+```
 
 ### To-Do:
-- Configure function to return a summary of each CSV that was processed (simple)..
-- Provide mechanism to include tags (complex)..
+- Configure function to return a summary of each CSV that was processed (simple)..  
+  At present the function will return `<null>` when successfully completed. Enhancement would be to have function return JSON array containing the name of each of the Usage Report files that were processed, for example:
+
+``` json
+{
+    "reports" : [ "0001000000010470", "0001000000010480" ]
+}
+```
+
+- Provide mechanism to include tags (complex)..  
+  Usage Report data contains a record of all tags associated with a given resource at the time of the report generation. At present, the billing function does not include the tag data. Enhancement would be to include a mechanism to upload to ADW the tags associated with each resource.
