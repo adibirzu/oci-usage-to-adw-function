@@ -23,6 +23,10 @@ def handler(ctx, data: io.BytesIO=None):
       headers={"Content-Type": "application/json"})
 
 def do(signer):
+# return data..
+   file_list = None
+   file_list = []
+
 # establish function start-time..
    runsec = None
    date1 = time.time()
@@ -93,32 +97,50 @@ def do(signer):
          break
       elif (val == 0):
          # no record of this usage report found in db..
-         #    - let's process this file..
-         #    - copy report to local file system..
+         #   - let's process this file..
+         #   - copy report to local file system..
          with open(report_path + '/' + gz_filename, 'wb') as f:
             object_details = object_storage.get_object(usage_report_namespace,usage_report_bucket,o.name)
             for chunk in object_details.data.raw.stream(1024 * 1024, decode_content=False):
                f.write(chunk)
                logging.info('finished downloading ' + gz_filename)
-      
+
          # unzip usage report file..
          with gzip.open(report_path + '/' + gz_filename, 'r') as f_in, open(report_path + '/' + csv_filename, 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
-      
-         # format utilisation report..
+
+         # format usage report..
          #   - use pandas df to format csv data..
          #   - rename headers to remove '/'..
+         #   - include 'lineItem/backreferenceNo' col if not present..
          df = pd.read_csv(report_path + '/' + csv_filename,
          index_col=False,
-         usecols=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+         parse_dates=[0])
+
+         if ("lineItem/backreferenceNo" not in df.columns[df.columns.str.contains(pat = 'lineItem/backreferenceNo')]):
+            csv_brn = False
+            pd_cols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            pd_names = ["lineItem_referenceNo", "lineItem_tenantId", "lineItem_intervalUsageStart", "lineItem_intervalUsageEnd", "product_service", "product_resource", "product_compartmentId", "product_compartmentName", "product_region", "product_availabilityDomain", "product_resourceId", "usage_consumedQuantity", "usage_billedQuantity", "usage_consumedQuantityUnits", "usage_consumedQuantityMeasure", "lineItem_isCorrection"]
+         else:
+            csv_brn = 1
+            pd_cols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+            pd_names = ["lineItem_referenceNo", "lineItem_tenantId", "lineItem_intervalUsageStart", "lineItem_intervalUsageEnd", "product_service", "product_resource", "product_compartmentId", "product_compartmentName", "product_region", "product_availabilityDomain", "product_resourceId", "usage_consumedQuantity", "usage_billedQuantity", "usage_consumedQuantityUnits", "usage_consumedQuantityMeasure", "lineItem_isCorrection", "lineItem_backreferenceNo"]
+
+         df = pd.read_csv(report_path + '/' + csv_filename,
+         index_col=False,
+         usecols=pd_cols,
          parse_dates=[0],
          header=0,
-         names=["lineItem_referenceNo", "lineItem_tenantId", "lineItem_intervalUsageStart", "lineItem_intervalUsageEnd", "product_service", "product_resource", "product_compartmentId", "product_compartmentName", "product_region", "product_availabilityDomain", "product_resourceId", "usage_consumedQuantity", "usage_billedQuantity", "usage_consumedQuantityUnits", "usage_consumedQuantityMeasure", "lineItem_isCorrection", "lineItem_backreferenceNo"])
-      
-         # insert 'usage_report' column into df & write out file..
+         names=pd_names)
+
+         # insert additional column(s) into df & write out csv file..
+         if csv_brn == False:
+            df.insert(16, "lineItem_backreferenceNo", '')
+            logging.info('inserting col lineItem_backreferenceNo into csv..')
          df.insert(0, "usage_report", os.environ['usage_report_bucket'] + "-" + filename)
+         logging.info('inserting col usage_report into csv..')
          export_csv = df.to_csv(report_path + '/' + 'trim_' + csv_filename, index = None, header=True)
-      
+
          # insert utilisation data into adw..
          with open(report_path + '/' + 'trim_' + csv_filename, "r") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -129,6 +151,11 @@ def do(signer):
          cur.close()
          con.commit()
          con.close()
-      
+
+         # curate return data..
+         file_list.append(csv_filename)
          # clean-up working dir..
          os.system('rm -rf %s/*' % report_path)
+
+   # data for function response..
+   return file_list
