@@ -122,7 +122,7 @@ def do(signer):
             pd_cols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
             pd_names = ["lineItem_referenceNo", "lineItem_tenantId", "lineItem_intervalUsageStart", "lineItem_intervalUsageEnd", "product_service", "product_resource", "product_compartmentId", "product_compartmentName", "product_region", "product_availabilityDomain", "product_resourceId", "usage_consumedQuantity", "usage_billedQuantity", "usage_consumedQuantityUnits", "usage_consumedQuantityMeasure", "lineItem_isCorrection"]
          else:
-            csv_brn = 1
+            csv_brn = True
             pd_cols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
             pd_names = ["lineItem_referenceNo", "lineItem_tenantId", "lineItem_intervalUsageStart", "lineItem_intervalUsageEnd", "product_service", "product_resource", "product_compartmentId", "product_compartmentName", "product_region", "product_availabilityDomain", "product_resourceId", "usage_consumedQuantity", "usage_billedQuantity", "usage_consumedQuantityUnits", "usage_consumedQuantityMeasure", "lineItem_isCorrection", "lineItem_backreferenceNo"]
 
