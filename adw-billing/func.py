@@ -112,7 +112,7 @@ def do(signer):
          # format usage report..
          #   - use pandas df to format csv data..
          #   - rename headers to remove '/'..
-         #   - include 'lineItem/backreferenceNo' col if not present..
+         #   - include 'lineItem_backreferenceNo' col if not present..
          df = pd.read_csv(report_path + '/' + csv_filename,
          index_col=False,
          parse_dates=[0])
@@ -141,7 +141,7 @@ def do(signer):
          logging.info('inserting col usage_report into csv..')
          export_csv = df.to_csv(report_path + '/' + 'trim_' + csv_filename, index = None, header=True)
 
-         # insert utilisation data into adw..
+         # insert usage data into adw..
          with open(report_path + '/' + 'trim_' + csv_filename, "r") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             next(csv_reader)
