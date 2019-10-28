@@ -58,10 +58,18 @@ The following should be completed before going ahead and creating your Oracle Cl
  - **Configure Your Client Environment for Function Development:** Before you can start using Oracle Functions to create and deploy functions, you have to set up your client environment for function development. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsconfiguringclient.htm) for guidance on the process.
 
 ### Additional IAM Policies
-When a function you've deployed to Oracle Functions is running, it can access other Oracle Cloud Infrastructure resources. To enable a function to access another Oracle Cloud Infrastructure resource, you have to include the function in a dynamic group, and then create a policy to grant the dynamic group access to that resource. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsaccessingociresources.htm) for guidance on creating a Dynamic Group. 
+When a function you've deployed to Oracle Functions is running, it can access other Oracle Cloud Infrastructure resources. To enable a function to access another Oracle Cloud Infrastructure resource, you have to include the function in a dynamic group, and then create a policy to grant the dynamic group access to that resource. Follow the link to [this tutorial](https://docs.cloud.oracle.com/iaas/Content/Functions/Tasks/functionsaccessingociresources.htm) for guidance on creating a dynamic group. 
 
-For our deployment scenario we'll require our "FnFunc-Demo" Dynamic Group to access both the Usage Report Object Storage Bucket, as well as our Autonomous Database instance. To enable this, create the following additional IAM Policies:
+For our deployment scenario we'll require our "FnFunc-Demo" dynamic group to access both the Usage Report object storage bucket, as well as our Autonomous Database instance. To enable this, create the following dynamic group and additional IAM policies:
 
+#### Dynamic group
+For the below dynamic group definition, the `resource.compartment.id` is that of the "Demo-Compartment" where the application and associated function will be deployed:
+```
+ALL {resource.type = 'fnfunc', resource.compartment.id = 'ocid1.compartment.oc1..aaaaaaaafnaar7sww76or6eyb3j625uji3tp4cb4tosaxx4wbxvvag4dkrra'}
+```
+
+#### IAM policies
+Create the additional IAM policies:
 ```
 endorse dynamic-group FnFunc-Demo to read objects in tenancy usage-report
 allow dynamic-group FnFunc-Demo to use autonomous-databases in compartment Demo-Compartment where request.permission='AUTONOMOUS_DATABASE_CONTENT_READ'
@@ -141,7 +149,17 @@ After invocation, the function will connect to the ADW instance and download and
 ```
 $ fn config function billing adw-billing db_dsn <value>
 ```
-The `<value>` field should contain the preferred DSN connection string for the database. DSNs are available within the tsnames.ora file which is located in the credentials wallet previously downloaded in the Prerequisites section herein.
+The `<value>` field should contain the preferred DSN connection string for the database.  
+
+An ODBC DSN specifies the database server name, and other database-related information required to access the Autonomous Data Warehouse instance.
+Available DSNs are contained within the tsnames.ora file, which is located in the credentials wallet previously downloaded in the Prerequisites section herein.  
+
+The tsnames.ora file will contain multiple DSNs of the format `name = (configuration data)`, e.g.
+```
+db201908233333_high = (description= (address=(protocol=tcps)(port=1522)(host=adb.us-ashburn-1.oraclecloud.com))(connect_data=(service_name=aaaaaaaaaayxrey_db201908233333_high.adwc.oraclecloud.com))(security=(ssl_server_cert_dn=
+        "CN=adwc.uscom-east-1.oraclecloud.com,OU=Oracle BMCS US,O=Oracle Corporation,L=Redwood City,ST=California,C=US"))   )
+```
+In the case of the above example, the required `<value>` will be the name `db201908233333_high`.
 
 *-- Autonomous Database OCID*
 ```
@@ -170,6 +188,12 @@ $ fn invoke billing adw-billing
 ```
 That's it! Once completed, your function has now inserted all historical Usage Report data into your ADW instance.  
 *Note: The current maximum run time for an Oracle Function is 120 seconds. If your tenancy has hundreds of historical Usage Reports to process (there can be up to 365), then it may take a couple of invocations to completely process the data backlog..*
+
+### Function return data
+The function will return a JSON array containing the name of each of the Usage Report files that were processed during the given invocation, e.g.
+``` JSON
+["0001000000010470.csv", "0001000000010480.csv"]
+```
 
 ### Inspect function logs
 The function has been configured to provide some basic logging regarding it's operation.  
@@ -207,14 +231,5 @@ ocid1.tenancy.oc1..aaaaaaaac3l6hgylozzuh2bxhf3557quavpa2v6675u2kejplzalhgk4nzka-
 ```
 
 ### To-Do:
-- Configure function to return a summary of each CSV that was processed (simple)..  
-  At present the function will return `<null>` when successfully completed. Enhancement would be to have function return JSON array containing the name of each of the Usage Report files that were processed, for example:
-
-``` json
-{
-    "reports" : [ "0001000000010470", "0001000000010480" ]
-}
-```
-
 - Provide mechanism to include tags (complex)..  
   Usage Report data contains a record of all tags associated with a given resource at the time of the report generation. At present, the billing function does not include the tag data. Enhancement would be to include a mechanism to upload to ADW the tags associated with each resource.
